@@ -9,6 +9,9 @@ namespace COMP123_S2019_FinalTestA
 {
     static class Program
     {
+        // This is temporary
+        public static MasterForm masterForm;
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -17,7 +20,9 @@ namespace COMP123_S2019_FinalTestA
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run();
+            masterForm = new MasterForm();
+
+            Application.Run(masterForm);
         }
     }
 }
