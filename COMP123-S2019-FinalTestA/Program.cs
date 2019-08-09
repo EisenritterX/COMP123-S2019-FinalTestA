@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using COMP123_S2019_FinalTestA.Views;
 
 namespace COMP123_S2019_FinalTestA
 {
@@ -16,7 +17,7 @@ namespace COMP123_S2019_FinalTestA
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run();
         }
     }
 }
