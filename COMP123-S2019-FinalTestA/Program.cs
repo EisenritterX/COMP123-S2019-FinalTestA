@@ -23,6 +23,7 @@ namespace COMP123_S2019_FinalTestA
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             heroGenerator = new HeroGenerator();
+            hero = new Hero();
             Application.Run(heroGenerator);
         }
     }

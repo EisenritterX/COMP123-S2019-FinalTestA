@@ -11,14 +11,21 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using System.Linq;
 
 namespace COMP123_S2019_FinalTestA.Views
 {
     public partial class HeroGenerator : COMP123_S2019_FinalTestA.Views.MasterForm
     {
+        List<string> FirstNameList;
+        List<string> LastNameList;
+        List<string> PowersList;
         public HeroGenerator()
         {
             InitializeComponent();
+            LoadNames();
+            GenerateNames();
+            LoadPowers();
         }
 
         /// <summary>
@@ -69,6 +76,8 @@ namespace COMP123_S2019_FinalTestA.Views
                     using (StreamReader inputStream = new StreamReader(File.Open(CharacterSheetOpenFileDialog.FileName, FileMode.Open)))
                     {
                         //Read from file
+                        Program.hero.FirstName = inputStream.ReadLine();
+                        Program.hero.LastName = inputStream.ReadLine();
                         //Physical Ability
                         Program.hero.Fighting = inputStream.ReadLine();
                         Program.hero.Agility = inputStream.ReadLine();
@@ -79,6 +88,12 @@ namespace COMP123_S2019_FinalTestA.Views
                         Program.hero.Intuition = inputStream.ReadLine();
                         Program.hero.Psyche = inputStream.ReadLine();
                         Program.hero.Popularity = inputStream.ReadLine();
+
+                        Program.hero.Powers.Clear();
+                        Program.hero.Powers.Add(inputStream.ReadLine());
+                        Program.hero.Powers.Add(inputStream.ReadLine());
+                        Program.hero.Powers.Add(inputStream.ReadLine());
+                        Program.hero.Powers.Add(inputStream.ReadLine());
                         //Clean up
                         inputStream.Close();
                         inputStream.Dispose();
@@ -88,6 +103,7 @@ namespace COMP123_S2019_FinalTestA.Views
                 {
                     MessageBox.Show("ERROR" + exception.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+                LoadHero();
             }
         }
 
@@ -110,7 +126,10 @@ namespace COMP123_S2019_FinalTestA.Views
                 //open the stream for writing
                 using (StreamWriter outputStream = new StreamWriter(File.Open(CharacterSheetSaveFileDialog.FileName, FileMode.Create)))
                 {
+
                     //Write to File
+                    outputStream.WriteLine(Program.hero.FirstName);
+                    outputStream.WriteLine(Program.hero.LastName);
                     //Physical Ability
                     outputStream.WriteLine(Program.hero.Fighting);
                     outputStream.WriteLine(Program.hero.Agility);
@@ -122,6 +141,12 @@ namespace COMP123_S2019_FinalTestA.Views
                     outputStream.WriteLine(Program.hero.Psyche);
                     outputStream.WriteLine(Program.hero.Popularity);
                     //cleanup
+
+                    outputStream.WriteLine(Program.hero.Powers[0]);
+                    outputStream.WriteLine(Program.hero.Powers[1]);
+                    outputStream.WriteLine(Program.hero.Powers[2]);
+                    outputStream.WriteLine(Program.hero.Powers[3]);
+
                     outputStream.Close();
                     outputStream.Dispose();
 
@@ -133,12 +158,110 @@ namespace COMP123_S2019_FinalTestA.Views
 
         private void GenerateAbilitiesButton_Click(object sender, EventArgs e)
         {
-            Random rnd = new Random();
-            using (StreamReader inputStream = new StreamReader(@"Data\powers.txt"))
-            {
+            GenerateRandomPowers();
+            RNGenerator();
+        }
 
+        private void GenerateRandomPowers()
+        {
+            Random powerIndex = new Random();
+            Power1DataLabel.Text =PowersList[powerIndex.Next(0, PowersList.Count - 1)];
+            Power2DataLabel.Text = PowersList[powerIndex.Next(0, PowersList.Count - 1)];
+            Power3DataLabel.Text = PowersList[powerIndex.Next(0, PowersList.Count - 1)];
+            Power4DataLabel.Text = PowersList[powerIndex.Next(0, PowersList.Count - 1)];
+
+            Program.hero.Powers.Add(Power1DataLabel.Text);
+            Program.hero.Powers.Add(Power2DataLabel.Text);
+            Program.hero.Powers.Add(Power3DataLabel.Text);
+            Program.hero.Powers.Add(Power4DataLabel.Text);
+        }
+
+        private void LoadPowers()
+        {
+            PowersList = File.ReadAllLines(@"..\..\Data\powers.txt").ToList();
+        }
+
+        private void RNGenerator()
+        {
+            Random stats = new Random();
+            FightingDataLabel.Text = stats.Next(10, 50).ToString();
+            StrengthDataLabel.Text = stats.Next(10,50).ToString();
+            AgilityDataLabel.Text = stats.Next(10, 50).ToString();
+            EnduranceDataLabel.Text = stats.Next(10, 50).ToString();
+
+            ReasonDataLabel.Text = stats.Next(10, 50).ToString();
+            IntuitionDataLabel.Text = stats.Next(10, 50).ToString();
+            PsycheDataLabel.Text = stats.Next(10, 50).ToString();
+            PopularityDataLabel.Text = stats.Next(10, 50).ToString();
+
+            //Physical Ability
+            Program.hero.Fighting = FightingDataLabel.Text;
+            Program.hero.Agility = AgilityDataLabel.Text;
+            Program.hero.Strength = StrengthDataLabel.Text;
+            Program.hero.Endurance = EnduranceDataLabel.Text;
+            //Mental Abillity
+            Program.hero.Reason = ReasonDataLabel.Text;
+            Program.hero.Intuition =IntuitionDataLabel.Text;
+            Program.hero.Psyche = PsycheDataLabel.Text;
+            Program.hero.Popularity = PopularityDataLabel.Text;
+        }
+
+        private void GenerateNameButton_Click(object sender, EventArgs e)
+        {
+            GenerateNames();
+            Program.hero.FirstName = FirstNameDataLabel.Text;
+            Program.hero.LastName = LastNameDataLabel.Text;
+        }
+
+        private void LoadNames()
+        {
+            FirstNameList = File.ReadAllLines(@"..\..\Data\firstNames.txt").ToList();
+            LastNameList = File.ReadAllLines(@"..\..\Data\lastNames.txt").ToList();
+        }
+
+        private void GenerateNames()
+        {
+            Random fnameRandomIndex = new Random();
+            Random lnameRandomIndex = new Random();
+            string Fname = FirstNameList[fnameRandomIndex.Next(0, FirstNameList.Count - 1)];
+            string Lname = LastNameList[lnameRandomIndex.Next(0, LastNameList.Count - 1)];
+            HeroNameTextBox.Text = Fname +" "+ Lname;
+            FirstNameDataLabel.Text = Fname;
+            LastNameDataLabel.Text = Lname;
+        }
+
+        private void MainTabControl_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (MainTabControl.SelectedIndex == 3)
+            {
+                LoadHero();
             }
-            
+        }
+
+        private void LoadHero()
+        {
+            CSFname.Text = Program.hero.FirstName;
+            CSLName.Text = Program.hero.LastName;
+            //Physical Ability
+            CSFighting.Text = Program.hero.Fighting;
+            CSStrength.Text = Program.hero.Agility;
+            CSAgility.Text = Program.hero.Strength;
+            CSEndurance.Text = Program.hero.Endurance;
+            //Mental Abillity
+            CSReason.Text = Program.hero.Reason;
+            CSIntuition.Text = Program.hero.Intuition;
+            CSPsyche.Text = Program.hero.Psyche;
+            CSPopularity.Text = Program.hero.Popularity;
+
+            CSPower1.Text = Program.hero.Powers[0];
+            CSPower2.Text = Program.hero.Powers[1];
+            CSPower3.Text = Program.hero.Powers[2];
+            CSPower4.Text = Program.hero.Powers[3];
+        }
+
+        private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
     }
 }
